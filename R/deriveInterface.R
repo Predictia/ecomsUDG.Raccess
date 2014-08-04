@@ -57,7 +57,8 @@ deriveInterface <- function(dataset, var, dictionary, time) {
                                     deriveSurfacePressure = "tas",
                                     deriveSurfaceRelativeHumidity = "tas",
                                     deriveSurfaceSpecificHumidity = "tas",
-                                    deriveSurfaceWindSpeed = "uas")
+                                    deriveSurfaceWindSpeed = "uas",
+									deriveTotalCloudCoverOktas = "tcc")
       } else {
             deriveInterface <- "none"
             leadVar <- var
