@@ -28,7 +28,7 @@ deriveTotalCloudCoverOktas.S4 <- function(gds, grid, latLon, runTimePars, member
                   ft <- foreTimePars$ForeTimeRangesList[[j]]
                   aux.list2 <- rep(list(bquote()), length(latLon$llRanges))
                   for (k in 1:length(latLon$llRanges)) {
-                        subSet <- grid$makeSubset(rt, ens, ft, z, latLon$llRanges[[k]]$get(0L), latLon$llRanges[[k]]$get(1L))
+					  	subSet <- grid$makeSubset(rt, ens, ft, z, latLon$llRanges[[k]]$get(0L), latLon$llRanges[[k]]$get(1L))
                         shapeArray <- rev(subSet$getShape())
                         dimNamesRef <- dimNames              
                         if (latLon$pointXYindex[1] >= 0) {

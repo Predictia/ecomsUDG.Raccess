@@ -36,7 +36,8 @@ loadSeasonalForecast.S4 <- function(dataset, gds, var, grid, dic, members, latLo
                         deriveSurfacePressure = deriveSurfacePressure.S4(gds, grid, latLon, runTimePars, memberRangeList, foreTimePars),
                         deriveSurfaceRelativeHumidity = deriveSurfaceRelativeHumidity.S4(gds, grid, latLon, runTimePars, memberRangeList, foreTimePars),
                         deriveSurfaceSpecificHumidity = deriveSurfaceSpecificHumidity.S4(gds, grid, latLon, runTimePars, memberRangeList, foreTimePars),
-                        deriveSurfaceWindSpeed = deriveSurfaceWindSpeed.S4(gds, grid, latLon, runTimePars, memberRangeList, foreTimePars))
+                        deriveSurfaceWindSpeed = deriveSurfaceWindSpeed.S4(gds, grid, latLon, runTimePars, memberRangeList, foreTimePars),
+						deriveTotalCloudCoverOktas = deriveTotalCloudCoverOktas.S4(gds, grid, latLon, runTimePars, memberRangeList, foreTimePars))
       if (!is.null(dic)) {
             isStandard <- TRUE
             mdArray <- dictionaryTransformForecast(dic, foreTimePars, mdArray)
