@@ -50,10 +50,10 @@ deriveTotalCloudCoverOktas.S4 <- function(gds, grid, latLon, runTimePars, member
                   }
                   # Sub-routine for daily aggregation from 6h data
                   if (!is.na(foreTimePars$dailyAggr)) {
-                        aux.list1[[j]] <- toDD(do.call("abind", c(aux.list2, along = 1)), dimNamesRef, foreTimePars$dailyAggr)
+                        aux.list1[[j]] <- round(toDD(do.call("abind", c(aux.list2, along = 1)), dimNamesRef, foreTimePars$dailyAggr))
                         dimNamesRef <- attr(aux.list1[[j]], "dimensions")
                   } else {
-                        aux.list1[[j]] <- do.call("abind", c(aux.list2, along = 1))
+                        aux.list1[[j]] <- round(do.call("abind", c(aux.list2, along = 1)))
                   }
                   aux.list2 <- NULL
             }
