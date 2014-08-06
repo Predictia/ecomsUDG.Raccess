@@ -43,7 +43,7 @@ deriveTotalCloudCoverOktas.S4 <- function(gds, grid, latLon, runTimePars, member
                         }
                         # derive tcco
                         tcc <- subSet$readDataSlice(-1L, -1L, -1L, -1L, latLon$pointXYindex[2], latLon$pointXYindex[1])$copyTo1DJavaArray()
-                        tcco <- tcc2tcco(tcc)
+                        tcco <- cl2clo(tcc)
                         tcc <- NULL
                         aux.list2[[k]] <- array(tcco, dim = shapeArray)
 						tcco <- NULL
