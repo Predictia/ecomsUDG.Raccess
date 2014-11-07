@@ -16,14 +16,14 @@ loadECOMS(dataset, var, dictionary = TRUE, members = NULL, lonLim = NULL,
 
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{dataset}{A character string indicating the database to be accessed. Currently accepted values are \code{"System4_seasonal_15"}, \code{"System4_seasonal_51"}, \code{"System4_annual_15"} and \code{"CFSv2_seasonal_16"} for hindcasts (where the notation indicates the GCM name, the temporal range and the default number of ensemble members returned respectively, separated by the lower bars), \code{"WFDEI"} for the WATCH Forcing Dataset based on ERA-Interim (gridded observations) and \code{"NCEP"} for the NCEP/NCAR reanalysis. See Details}
+  \item{dataset}{A character string indicating the database to be accessed. Currently accepted values are \code{"System4_seasonal_15"}, \code{"System4_seasonal_51"}, \code{"System4_annual_15"} and \code{"CFSv2_seasonal_16"} for hindcasts (where the notation indicates the GCM name, the temporal range and the default number of ensemble members returned respectively, separated by the lower bars), \code{"WFDEI"} for the WATCH Forcing Dataset based on ERA-Interim (gridded observations) and \code{"NCEP"} for the NCEP/NCAR reanalysis. See details on available datasets.}
   
   \item{var}{
-Variable code (character string). This is the name of the variable according to the R standard naming (see the next argument). For variables with vertical levels, the vertical level is specified next to the variable name followed by the \dQuote{@} symbol (e.g. \code{var = "z@700"} for geopotential heigth at 700 mb isobaric surface pressure level). It is also possible to enter the variable name as originally coded in the dataset to skip data homogenization, although this is not recommended. See the next argument. 
+Variable code (character string). This is the name of the variable according to the R standard naming (see the next argument). For variables with vertical levels, the vertical level is specified next to the variable name followed by the \dQuote{@} symbol (e.g. \code{var = "z@700"} for geopotential heigth at 700 mb isobaric surface pressure level). It is also possible to enter the variable name as originally coded in the dataset to skip data homogenization, although this is not recommended (see the next argument). See details on available variables. 
 }
 
   \item{dictionary}{
-A logical flag indicating if a dictionary is used for variable homogenization. Default (strongly recommended) is set to \code{TRUE}, meaning that the function will internally perform the necessary homogenization steps to return the standard variables defined in the vocabulary (e.g. variable transformation, deaccumulation...). See details. 
+A logical flag indicating if a dictionary is used for variable homogenization. Default (strongly recommended) is set to \code{TRUE}, meaning that the function will internally perform the necessary homogenization steps to return the standard variables defined in the vocabulary (e.g. variable transformation, deaccumulation...). See details on data homogenization. 
 }
 
   \item{members}{
@@ -31,22 +31,22 @@ A vector of integers indicating the members to be loaded. Default to \code{NULL}
 }
 
   \item{lonLim}{
-Vector of length = 2, with minimum and maximum longitude coordinates, in decimal degrees, of the bounding box selected. For single-point queries, a numeric value with the longitude coordinate. If \code{NULL} (default), the whole longitudinal range is selected (Note that this may lead to a large output object size). See details. 
+Vector of length = 2, with minimum and maximum longitude coordinates, in decimal degrees, of the bounding box selected. For single-point queries, a numeric value with the longitude coordinate. If \code{NULL} (default), the whole longitudinal range is selected (Note that this may lead to a large output object size). See details on the definition of spatial domains. 
 }
   \item{latLim}{
 Same as \code{lonLim}, but for the selection of the latitudinal range.
 }
 
   \item{season}{
-An integer vector specifying the desired season (in months, January = 1 ..., December = 12). Options include one to several (contiguous) months. For full year selections (not possible for all datasets, e.g. seasonal forecasts), the argument value must be set to \code{season = 1:12}. If the requested variable is static (e.g. orography) it will be ignored. See details. 
+An integer vector specifying the desired season (in months, January = 1 ..., December = 12). Options include one to several (contiguous) months. For full year selections (not possible for all datasets, e.g. seasonal forecasts), the argument value must be set to \code{season = 1:12}. If the requested variable is static (e.g. orography) it will be ignored. See details on the definition of temporal slices. 
 }
 
   \item{years}{
-Optional vector of years to select. Default to all available years. If the requested variable is static (e.g. orography) it will be ignored. See details. 
+Optional vector of years to select. Default to all available years. If the requested variable is static (e.g. orography) it will be ignored. See details on the definition of temporal slices. 
 }
 
   \item{leadMonth}{
-Integer value indicating the lead forecast time, relative to the first month of \code{season}. Note that \code{leadMonth=1} for \code{season=1} (January) corresponds to the December initialization. Default to 1 (i.e., 1 lead month forecast). If the dataset is not a forecast or the requested variable is static (e.g. orography) it will be ignored. A message will be printed on screen in the first case if its value is different from \code{NULL}.
+Integer value indicating the lead forecast time, relative to the first month of \code{season}. Note that \code{leadMonth=1} for \code{season=1} (January) corresponds to the December initialization. Default to 1 (i.e., 1 lead month forecast). If the dataset is not a forecast or the requested variable is static (e.g. orography) it will be ignored. A message will be printed on screen in the first case if its value is different from \code{NULL}. See details on initialization times.
 }
 
   \item{time}{A character vector indicating the temporal filtering/aggregation of the output data. Default to \code{"none"}, which returns the original time series as stored in the dataset. For sub-daily variables, instantantaneous data at selected verification times can be filtered using one of the character strings \code{"00"}, \code{"06"}, \code{"12"} and \code{"18"}. If daily aggregated data are required use \code{"DD"}. If the requested variable is static (e.g. orography) it will be ignored. See details for time aggregation options.
@@ -61,11 +61,13 @@ A list with the following elements providing the necessary information for data 
       \item \code{varName} A character string indicating which is the variable returned. Same as value provided for argument \code{var}
       \item \code{isStandard} Logical value indicating whether the variable returned is standard or not (i.e., wether the dictionary has been used -the default- or not.)
       \item \code{level} A numeric value indicating the vertical level of the variable (\code{NULL} for 2D variables)}
-\item{Data}{A N-dimensional array. The number of dimensions (N) depends on the type of request given that dimensions of length one are dropped. Thus, N can take values from 4 (several members for a rectangular domain with different values for longitude, latitude, ensemble and time dimensions) to 1 (atomic vector), for single-point and single-member selections, for which only the time dimension is required. The dimensions are labelled by the \dQuote{dimnames} attribute. Note that the order of the dimensions is not fixed.}
+\item{Data}{A N-dimensional array. The number of dimensions (N) depends on the type of request given that dimensions of length one are dropped. Thus, N can take values from 4 (several members for a rectangular domain with different values for longitude, latitude, ensemble and time dimensions) to 1 (atomic vector), for single-point and single-member selections, for which only the time dimension is required. The dimensions are labelled by the \dQuote{dimnames} attribute, and are always arranged in canonical order (i.e.: [member, time, level, lat, lon]).}
 \item{xyCoords}{A list with \code{x} and \code{y} components, as required by many standard mapping functions in R (see e.g. \code{\link[graphics]{image}}. In addition, the attribute \code{projection} provides geo-referencing information for more advanced spatial operations/conversions, in the form of a character string following the \href{http://trac.osgeo.org/proj/}{PROJ.4 specifications}.}
 \item{Dates}{A list with two \code{\link[base]{POSIXct}} time elements of the same length as the \sQuote{time} dimension in \code{Data}, defining the time boundaries of the time axis coordinates in the interval \emph{[start, end)}, or if the loaded field is static, a character string indicating it. See details.}
 \item{InitializationDates}{A \code{\link[base]{POSIXct}} time object corresponding to the initialization times selected. Only for forecast datasets. NA for static variables (e.g. orography). See details.}
 \item{Members}{A character vector with the names of the ensemble members returned, in the same order as arranged in the \code{Data} array. Only for forecast datasets. NA for static variables (e.g. orography). See details.}
+
+Additionally, there are three global attributes with metadata, (\code{"dataset"}, \code{"source"} and \code{"URL"}), providing information on the dataset loaded, their source (the ECOMS UDG) and the URL for reference.
 }
 %%  ~Describe the value returned
 %%  If it is a LIST, use
@@ -101,11 +103,13 @@ In the case of the CFSv2 reforecast there are four initializations (4 cycles) fr
 \strong{Definition of spatial domains}
 
 
-Regarding the selection of the spatial domain, it is possible to select the whole spatial domain of the datasets (currently global for all hindcasts available). In this case \code{lonLim=NULL} and \code{latLim=NULL}. More often, rectangular domains are defined by the minimum and maximum coordinates in longitude and latitude (for instance \code{lonLim=c(-10,10)} and \code{latLim=c(35,45)} indicates a rectangular window centered in the Iberian Peninsula), and single grid-cell values (for instance \code{lonLim=-3.21} and \code{latLim=41.087} for retrieving the data in the closest grid point to the point coordinate -3.21E, 41.087N. In the last two cases, the function operates by finding the nearest (euclidean distance) grid-points to the coordinates introduced.
+Regarding the selection of the spatial domain, it is possible to select the whole spatial domain of the datasets (currently global for all hindcasts available). In this case \code{lonLim=NULL} and \code{latLim=NULL}. More often, rectangular domains are defined by the minimum and maximum coordinates in longitude and latitude (for instance \code{lonLim=c(-10,10)} and \code{latLim=c(35,45)} indicates a rectangular window centered in the Iberian Peninsula), and single grid-cell values (for instance \code{lonLim=-3.21} and \code{latLim=41.087} for retrieving the data in the closest grid point to the point coordinate -3.21E, 41.087N. In the last two cases, the function operates by finding the nearest (euclidean distance) grid-points to the coordinates introduced. (NOTE: Currently the single-point option is disabled for the NCEP dataset, that only accepts rectangular domain selections.)
 
 The returned value by \code{xyCoords} varies accordingly, and it fits the common data structure of many R plotting functions (see \link[grDevices]{xy.coords} for obtaining a more detailed info).
 
 The spatial definition of the data is associated to a specific coordinate reference system via the \sQuote{proj4string} slot of \code{xyCoords}, thus enabling the direct application of geospatial operations such as projection transformations, spatial overlay methods etc with the appropriate R methods.
+
+
 
 
 \strong{Definition of temporal slices}
@@ -128,7 +132,7 @@ By default, 16 members are returned for the CFSv2 hindcast for better comparabil
 The argument \code{time} controls the temporal filtering/aggregation options that may apply for a variable. In case of daily mean data, this can be obtained in two different ways:
 \enumerate{
 \item For variables that are already stored as daily means in the dataset, both \code{"DD"} and \code{"none"} return the required daily output
-\item In case of 6-hourly data, if \code{"DD"} is chosen, the function will compute the daily mean as the averaged 6-hourly outputs for each day, printing an information message on screen. If the variable is precipitation or a radiation (\code{var} = \code{"tp"}, \code{"rsds"} or \code{"rlds"}), the result of the aggregation will be the sum rather than the mean (i.e., it will return the daily accumulated value).
+\item In case of 6-hourly data, if \code{"DD"} is chosen, the function will compute the daily mean as the averaged 6-hourly outputs for each day, printing an information message on screen. If the variable is precipitation or a radiation (\code{var} = \code{"tp"}, \code{"rsds"} or \code{"rlds"}), the result of the aggregation will be the sum rather than the mean (i.e., it will return the daily accumulated value). In the same way, if the variable is a daily maximum/minimum (i.e., \code{var = "tasmax"}/\code{var = "tasmin"}), the corresponding function will be applied to the 6-h outputs on a daily basis.
 \item In case of 12-hourly data, daily mean data (\code{"DD"}) won't be computed, and the function will raise an error. In this particular case, the only accepted \code{time} argument values will be \code{"none"}, \code{"00"} and \code{"12"}.
 }
 
@@ -150,4 +154,7 @@ The argument \code{time} controls the temporal filtering/aggregation options tha
 }
 
 
+\examples{\dontrun{
+# Go to <http://www.meteo.unican.es/ecoms-udg/RPackage/Examples>
+}}
 

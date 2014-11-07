@@ -36,6 +36,12 @@ loadECOMS <- function(dataset, var, dictionary = TRUE,
                   stop("Invalid season definition")
             }
       }
+      # Exception in NCEP due to different grids within the same dataset
+      if (dataset == "NCEP") {
+            if (length(lonLim) == 1 || length(latLim) == 1) {
+                  stop("Single-point selections are invalid for the NCEP dataset\nConsider using a small rectangular domain")
+            }
+      }
       # Note when loading gridded datasets
       if ((dataset == "WFDEI" | dataset == "NCEP") & !is.null(members)) {
             message("NOTE: The dataset is not a forecast. Argument 'members' will be ignored")      
@@ -98,6 +104,21 @@ loadECOMS <- function(dataset, var, dictionary = TRUE,
       gds$close()
       message("[", Sys.time(), "]", " Done")
       attr(out$xyCoords, "projection") <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"
+      # Dimension ordering
+      x <- attr(out$Data, "dimensions")
+      if (length(x) > 1) {
+            tab <- c("member", "time", "level", "lat", "lon")
+            b <- na.exclude(match(tab, x))
+            dimNames <- attr(out$Data, "dimensions")[b]
+            out$Data <- aperm(out$Data, perm = b)    
+            attr(out$Data, "dimensions")  <- dimNames
+      }
+      # Source Dataset and other metadata 
+      attr(out, "dataset") <- dataset
+      attr(out, "source") <- "ECOMS User Data Gateway" 
+      attr(out, "URL") <- "<http://meteo.unican.es/ecoms-udg>"
       return(out)
 }      
 # End
+
+
