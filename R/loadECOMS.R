@@ -1,11 +1,12 @@
 loadECOMS <- function(dataset, var, dictionary = TRUE, 
                      members = NULL, lonLim = NULL, latLim = NULL, season = NULL,
                      years = NULL, leadMonth = 1, time = "none",
-                     aggr.d = "none", aggr.m = "none") {
+                     aggr.d = "none", aggr.m = "none", url = NULL) {
       dataset <- match.arg(dataset, c("System4_seasonal_15",
                                       "System4_seasonal_51",
                                       "System4_annual_15",
                                       "CFSv2_seasonal",
+                                      "CFSv2_seasonal_operative",
                                       "SMHI-EC-EARTH_EUPORIAS",
                                       "WFDEI",
                                       "NCEP_reanalysis1",
@@ -22,10 +23,19 @@ loadECOMS <- function(dataset, var, dictionary = TRUE,
       aux.level <- findVerticalLevel(derInterface$leadVar)
       var <- aux.level$var
       level <- aux.level$level
-      url <- dataURL(dataset)
+      if(is.null(url)){
+        url <- dataURL(dataset)        
+      }else{
+        url = list("URL" = url, "excludeVars" = NULL)
+      }
       # Dictionary/shortName search
-      if (isTRUE(dictionary)) {
-            dicPath <- file.path(find.package("ecomsUDG.Raccess"), "dictionaries", paste0(dataset, ".dic"))
+      if (isTRUE(dictionary) || typeof(dictionary)=="character") {
+            if(typeof(dictionary)=="character"){
+              dicPath = file.path(dictionary, paste0(dataset, ".dic"));
+              dictionary = TRUE;
+            }else{
+              dicPath <- file.path(find.package("ecomsUDG.Raccess"), "dictionaries", paste0(dataset, ".dic"))              
+            }
             # for devel only 
             # dicPath <- file.path("./inst/dictionaries", paste(dataset, ".dic", sep = ""))
             dic <- dictionaryLookup.ECOMS(dicPath, derInterface, time)

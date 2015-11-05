@@ -44,10 +44,11 @@ getRunTimeDomain.CFS  <- function (runDatesAll, validMonth, members, years) {
       nov.inits <- which(((d == 8 | d == 13 | d == 18 | d == 23 | d == 28) & m == 10) | ((d == 2 | d == 7) & (m == 11 & h != 0)))
       dec.inits <- which(((d == 12 | d == 17 | d == 22 | d == 27) & (m == 11 & h != 0)) | ((d == 2 | d == 7) & (m == 12 & h != 6)))
       init.list <- lapply(ls(pattern = "\\.inits$")[pmatch(tolower(month.abb), ls(pattern = "\\.inits$"))], function(x) get(x))
+      nYears = length(unique(y))
       rm(list = c("d", "m", "y", ls(pattern = "\\.inits$")))
       runTimesValidMonth <- init.list[[validMonth]]
       runDatesValidMonth <- runDatesAll[runTimesValidMonth]
-      nmem <- length(init.list[[validMonth]] ) / 28
+      nmem <- length(init.list[[validMonth]] ) / nYears
       init.list <- NULL
       if (length(members) > nmem | any(members > nmem)) {
             stop("Maximum number of members for this initialization is ", nmem, "\nSee details in <http://meteo.unican.es/trac/wiki/udg/ecoms/dataserver/datasets/CFSv2>")

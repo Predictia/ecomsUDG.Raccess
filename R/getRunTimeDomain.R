@@ -38,14 +38,20 @@ getRunTimeDomain <- function(dataset, grid, members, season, years, leadMonth) {
       endYear <- endDay$year + 1900
       allYears <- startYear : endYear
       if (is.null(years)) {
-            if (grepl("CFSv2", dataset)) {
+            if (grepl("CFSv2_seasonal_operative", dataset)) {
+              years <- 2015:as.numeric(format(Sys.time(),"%Y"))
+            }else if (grepl("CFSv2", dataset)) {
                   years <- 1983:2009
             } else {
                   years <- allYears
             }
       } 
       if (grepl("CFSv2", dataset)) {
-            aux <- intersect(years, 1983:2009)      
+            if (grepl("CFSv2_seasonal_operative", dataset)) {
+              aux <- 2015:as.numeric(format(Sys.time(),"%Y"))
+            }else{
+              aux <- intersect(years, 1983:2009)
+            }
             if (!identical(as.integer(aux), as.integer(years))) {
                   warning("Available years in dataset: 1983-2009\nSome years were removed")
             }
